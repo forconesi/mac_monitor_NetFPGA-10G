@@ -1,0 +1,53 @@
+# Select the part to be used in the implementation run
+CONFIG PART = xc5vtx240tff1759-2;
+
+#######################################################################
+# Clock frequencies and clock management                              #
+#######################################################################
+NET "*txoutclk*" TNM_NET="clk156_top";
+# Clock rate below is the 10-Gigabit Ethernet speed; change to
+# 159.375 MHz for 10-Gigabit Fibre Channel applications
+TIMESPEC "TS_clk156_top" = PERIOD "clk156_top" 156.25 MHz;
+NET "dclk_50MHZ" TNM_NET=DCLK_CLK;
+TIMESPEC TS_DCLK_CLK = PERIOD DCLK_CLK 50 MHz;
+
+# RocketIO Transceiver Placement
+# Where possible, RocketIO Transceivers should be adjacent to allow timing
+# constraints to be met easily.
+# RECCLK
+NET *my_xaui/xaui_block/rocketio_wrapper_i/tile1_rxrecclk0_i TNM_NET=clk156_rec;
+TIMESPEC TS_clk156_rec = PERIOD clk156_rec 156.25MHz;
+
+######################## Start of GTX Constraints ######################
+##---------- Set placement for tile0_rocketio_wrapper_i/GTX_DUAL ------
+#INST xaui_block/rocketio_wrapper_i/tile0_xaui_v10_4_rocketio_wrapper_i/gtx_dual_i LOC=GTX_DUAL_X0Y0;
+##---------- Set placement for tile1_rocketio_wrapper_i/GTX_DUAL ------
+#INST xaui_block/rocketio_wrapper_i/tile1_xaui_v10_4_rocketio_wrapper_i/gtx_dual_i LOC=GTX_DUAL_X0Y1;
+######################### End of GTX Constraints #######################
+###################################################################
+
+
+#Modification May, 29
+#Copied from the netfpga project
+NET USR_100MHZ        LOC = AN25 | IOSTANDARD = LVCMOS33;       # 100MHZ CLOCK on the netfpga-10g board
+
+NET USR_100MHZ TNM_NET = sys_clk_pin;
+TIMESPEC TS_sys_clk_pin = PERIOD sys_clk_pin 100 MHz;
+
+NET "LED01"             LOC = "AK25" | IOSTANDARD = LVCMOS33;       # CAN BE USED FOR DEBUG
+NET "LED02"             LOC = "AM24" | IOSTANDARD = LVCMOS33;       # CAN BE USED FOR DEBUG
+NET "LED03"             LOC = "AP20" | IOSTANDARD = LVCMOS33;       # CAN BE USED FOR DEBUG
+
+# refclk for Port D
+NET "refclk_D_p"  LOC = "D27" ;
+NET "refclk_D_n"  LOC = "C27" ;
+
+
+# XAUI 0
+######################## Start of GTX Constraints ######################
+##---------- Set placement for tile0_rocketio_wrapper_i/GTX_DUAL ------
+INST my_xaui/xaui_block/rocketio_wrapper_i/tile0_xaui_v10_4_rocketio_wrapper_i/gtx_dual_i LOC=GTX_DUAL_X0Y11;
+##---------- Set placement for tile1_rocketio_wrapper_i/GTX_DUAL ------
+INST my_xaui/xaui_block/rocketio_wrapper_i/tile1_xaui_v10_4_rocketio_wrapper_i/gtx_dual_i LOC=GTX_DUAL_X0Y10;
+######################### End of GTX Constraints #######################
+###################################################################
